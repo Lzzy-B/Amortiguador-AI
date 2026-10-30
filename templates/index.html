@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Diagnóstico de Suspensión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+
+        <header class="header">
+            <div class="header-left">
+                <div>
+                    <h1>Diagnóstico de Suspensión</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="badge" id="badge-estado"> En espera</span>
+            </div>
+        </header>
+
+        <main class="main">
+
+            <section class="card video-card">
+                <div class="card-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="card-title">Cámara </span>
+                </div>
+                <div class="video-wrapper">
+                    <img src="{{ url_for('video') }}" alt="cámara">
+                </div>
+            </section>
+
+            <aside class="panel">
+
+                <div class="card metric-card">
+                    <h2 class="section-title">Métricas</h2>
+
+                    <div class="metric">
+                        <span class="metric-label">Rebotes</span>
+                        <span class="metric-value" id="rebotes">0</span>
+                    </div>
+
+                    <div class="metric">
+                        <span class="metric-label">Llantas detectadas</span>
+                        <span class="metric-value" id="llantas">0</span>
+                    </div>
+                </div>
+
+                <div class="card result-card">
+                    <h2 class="section-title">Resultado</h2>
+                    <div class="result-value" id="diagnostico">En espera</div>
+                </div>
+
+                <div class="card controls-card">
+                    <h2 class="section-title">Controles</h2>
+                    <div class="botones">
+                        <button id="btn-iniciar" class="btn-primario"> Iniciar</button>
+                        <button id="btn-reset" class="btn-secundario"> Reiniciar</button>
+                    </div>
+                </div>
+
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        async function actualizar() {
+            try {
+                const r = await fetch("/estado");
+                const d = await r.json();
+
+                document.getElementById("rebotes").textContent = d.rebotes;
+                document.getElementById("llantas").textContent = d.llantas;
+                document.getElementById("diagnostico").textContent = d.texto;
+
+                const badge = document.getElementById("badge-estado");
+                if (badge) badge.textContent = "● " + d.estado;
+
+            } catch (e) {
+                console.error("Error al actualizar:", e);
+            }
+        }
+
+        document.getElementById("btn-iniciar").onclick = async () => {
+            await fetch("/iniciar", { method: "POST" });
+        };
+        document.getElementById("btn-reset").onclick = async () => {
+            await fetch("/reset", { method: "POST" });
+        };
+
+        setInterval(actualizar, 500);
+    </script>
+</body>
+
+</html>
