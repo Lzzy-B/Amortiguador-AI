@@ -65,7 +65,7 @@ class DetectorSuspension:
         if self.estado == "IDLE" or not hay_llanta:
             return
 
-        TIEMPO_MIN_MS = 9000   # tiempo de espera antes de finalizar la medición 
+        TIEMPO_MIN_MS = 9000   # tiempo de espera de la medición 
 
         if self.estado == "MIDIENDO":
             self.historial_y.append(pos_y_actual)
@@ -102,7 +102,7 @@ class DetectorSuspension:
         if self.estado == "IDLE": return "En espera", (200, 200, 200)
         if self.estado == "MIDIENDO": return "Midiendo rebotes...", (255, 160, 0)
 
-        if rango <6.0 and self.rebotes == 0: # 1.0  mas estrcito en el movimiento
+        if rango <6.0 and self.rebotes == 0: # sensibilidad en el movimiento
             return "sin movimiento", (150, 150, 150)
 
         if self.rebotes <= 1: return "Amortiguador OK", (0, 200, 0)
@@ -120,7 +120,7 @@ class DetectorSuspension:
             x1, y1, x2, y2 = cajas[0] 
             alto_llanta = y2 - y1
             
-            # Recuadro azul (25%)
+            # Recuadro azul 
             subida = int(alto_llanta * 0.25) 
             crop_y1 = max(0, y1 - subida)
             crop_y2 = y1
@@ -144,7 +144,7 @@ class DetectorSuspension:
         progreso = 0
         if self.estado == "MIDIENDO" and self.t_liberacion:
             transcurrido = (t - self.t_liberacion) * 1000
-            progreso = min(100, (transcurrido / 9000) * 100)
+            progreso = min(100, (transcurrido / 9000) * 100) 
         elif self.estado == "FIN":
             progreso = 100
 
